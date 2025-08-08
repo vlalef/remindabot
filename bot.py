@@ -63,7 +63,11 @@ async def remind(interaction: discord.Interaction, time: str, message: str):
     except discord.Forbidden:
         # This happens if the user has DMs disabled for server members
         print(f"Could not send a DM to user {interaction.user.name}")
-
+        # Notify the user in the original channel (ephemeral so only they see it)
+        await interaction.followup.send(
+            "I couldn't send you a DM with your reminder. Please check your privacy settings or allow DMs from server members.",
+            ephemeral=True
+        )
 # Start the bot
 if TOKEN is None:
     print("ERROR: The DISCORD_TOKEN environment variable is not set.")
