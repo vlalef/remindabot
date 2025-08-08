@@ -4,13 +4,10 @@ from discord import app_commands
 import asyncio
 from dotenv import load_dotenv
 
-# Load environment variables from a .env file
 load_dotenv()
 
-# Get the bot token from environment variables
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-# Define the bot's intents (default is sufficient for slash commands)
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
@@ -47,28 +44,21 @@ async def remind(interaction: discord.Interaction, time: str, message: str):
     try:
         seconds = parse_time(time)
     except ValueError as e:
-        # Send an error message visible only to the user if the time format is invalid
         await interaction.response.send_message(f"Error in time format: {e}", ephemeral=True)
         return
     
-    # Immediately confirm to the user that the command was received
     await interaction.response.send_message(f"Alright! I will remind you about '{message}' in {time}.")
 
-    # Wait for the specified duration asynchronously (doesn't block the bot)
     await asyncio.sleep(seconds)
 
-    # Send the reminder via Direct Message (DM)
     try:
         await interaction.user.send(f"🔔 **Reminder:** {message}")
     except discord.Forbidden:
-        # This happens if the user has DMs disabled for server members
         print(f"Could not send a DM to user {interaction.user.name}")
-        # Notify the user in the original channel (ephemeral so only they see it)
         await interaction.followup.send(
             "I couldn't send you a DM with your reminder. Please check your privacy settings or allow DMs from server members.",
             ephemeral=True
         )
-# Start the bot
 if TOKEN is None:
     print("ERROR: The DISCORD_TOKEN environment variable is not set.")
 else:
