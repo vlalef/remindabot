@@ -20,10 +20,10 @@ def parse_time(time_str: str) -> int:
     unit = time_str[-1].lower()
     value_str = time_str[:-1]
 
-    if not value_str.isdigit():
+    try:
+        value = int(value_str)
+    except ValueError:
         raise ValueError("The time value must be a number.")
-    
-    value = int(value_str)
 
     if unit == 's':
         return value
